@@ -295,7 +295,7 @@ func (reader *DocumentReader) ensureNetwork() (err error) {
 
 	// enable noCursorTimeout anyway! #451 #784
 	if reader.client.IsTimeSeriesCollection(reader.ns.Database, reader.ns.Collection) == false {
-		findOptions.SetNoCursorTimeout(true)
+		// findOptions.SetNoCursorTimeout(true)
 	}
 	findOptions.SetComment(fmt.Sprintf("mongo-shake full sync: ns[%v] query[%v] rebuid-times[%v]",
 		reader.ns, reader.query, reader.rebuild))

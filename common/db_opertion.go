@@ -114,7 +114,7 @@ func ApplyOpsFilter(key string) bool {
 
 func getOplogTimestamp(conn *MongoCommunityConn, sortType int) (int64, error) {
 	var result bson.M
-	opts := options.FindOne().SetSort(bson.D{{"$natural", sortType}})
+	opts := options.FindOne().SetSort(bson.D{{"_id", sortType}})
 	err := conn.Client.Database(localDB).Collection(OplogNS).FindOne(nil, bson.M{}, opts).Decode(&result)
 	if err != nil {
 		return 0, err
@@ -190,14 +190,14 @@ func GetAllTimestamp(sources []*MongoSource, sslRootFile string) (map[string]Tim
 	tsMap := make(map[string]TimestampNode)
 
 	for _, src := range sources {
-		newest, err := GetNewestTimestampByUrl(src.URL, false, sslRootFile)
+		newest, err := GetNewestTimestampByUrl(src.URL, true, sslRootFile)
 		if err != nil {
 			return nil, 0, 0, 0, 0, err
 		} else if newest == 0 {
 			return nil, 0, 0, 0, 0, fmt.Errorf("illegal newest timestamp == 0")
 		}
 
-		oldest, err := GetOldestTimestampByUrl(src.URL, false, sslRootFile)
+		oldest, err := GetOldestTimestampByUrl(src.URL, true, sslRootFile)
 		if err != nil {
 			return nil, 0, 0, 0, 0, err
 		}
@@ -296,7 +296,7 @@ func GetListCollectionQueryCondition(conn *MongoCommunityConn) bson.M {
 	queryConditon := bson.M{}
 	if versionOk {
 		// 改成 not
-		queryConditon = bson.M{"type": bson.M{"$in": bson.A{"collection", "timeseries"}}}
+		// queryConditon = bson.M{"type": bson.M{"$in": bson.A{"collection", "timeseries"}}}
 	}
 
 	return queryConditon
